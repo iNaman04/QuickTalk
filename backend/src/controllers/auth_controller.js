@@ -7,6 +7,10 @@ export const signup = async (req, res) => {
     try {
         const { email, fullName, password } = req.body;
 
+        if (!email || !fullName || !password) {
+            return res.status(400).json({ message: "Please fill all the fields" });
+        }
+
         if (password.length < 6) {
             return res.status(400).json({ message: "password must be at least 6 characters long" });
         }
@@ -24,26 +28,54 @@ export const signup = async (req, res) => {
             password: hashedPassword
         });
 
-        if(newUser) {
+        if (newUser) {
             generateToken(newUser._id, res);
             await newUser.save();
-            res.status(201).json({_id: newUser._id, fullName: newUser.fullName, email: newUser.email, profilePic: newUser.profilePic});
+            res.status(201).json({ _id: newUser._id, fullName: newUser.fullName, email: newUser.email, profilePic: newUser.profilePic });
         }
         else {
             return res.status(400).json({ message: "Invalid user data" });
         }
 
     } catch (error) {
-        console.log("error in signup route" , error);
+        console.log("error in signup route", error);
         res.status(500).json({ message: "Server error" });
     }
 
 };
 
-export const login = (req, res) => {
-    res.send('Login Route');
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.status(400).json({ message: "User does not exist" });
+        }
+        
+        const isPasswordcorrect = await bcrypt.compare(password, user.password);
+        
+        if (!isPasswordcorrect) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+        generateToken(user._id, res);
+        
+        res.status(200).json({ _id: user._id, fullName: user.fullName, email: user.email, profilePic: user.profilePic });
+    } 
+    catch (error) {
+        console.log("error in login route", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
 
 export const logout = (req, res) => {
-    res.send('Logout Route');
+    res.cookie('token', '', {
+        maxAge: 0,  
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+};
+
+export const updateProfile = (req, res) => {
+    res.send("Profile update route");
 }
