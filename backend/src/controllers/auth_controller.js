@@ -76,6 +76,34 @@ export const logout = (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
 };
 
-export const updateProfile = (req, res) => {
-    res.send("Profile update route");
+export const updateProfile = async (req, res) => {
+    try {
+        const {profilePic} = req.body;
+        const userId =req.user._id;
+
+        if(!profilePic){
+            return res.status(400).json({message: "Profile picture is required"});
+        }
+        const uploadResume = await cloudinary.uploader.upload(profilePic)
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {profilePic: uploadResume.secure_url},
+            {new: true}
+        );
+        res.status(200).json({message: "Profile updated successfully", profilePic: updatedUser.profilePic});
+
+    } catch (error) {
+        console.log("error in updateProfile route", error);
+        res.status(500).json({message: "Server error"});
+    }
 }
+
+export const checkAuth = (req, res) => {
+    try {
+        res.status(200).json({ user: req.user });
+    } catch (error) {
+        console.log("error in checkAuth route", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+    
