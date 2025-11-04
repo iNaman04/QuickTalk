@@ -1,5 +1,5 @@
 import express from 'express';
-import Message from '../models/message_model';
+import Message from '../models/message_model.js';
 
 export const getUsersForSidebar = async (req, res) => {
     try {
