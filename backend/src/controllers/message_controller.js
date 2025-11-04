@@ -1,15 +1,22 @@
 import express from 'express';
-import Message from '../models/message_model';
+import Message from '../models/message_model.js';
+import mongoose from 'mongoose';
+import User from '../models/user_model.js';
 
 export const getUsersForSidebar = async (req, res) => {
+    
+    
     try {
-        const loggedInUserId = req.user._id;
-        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
+        const loggedInUserId = new mongoose.Types.ObjectId(req.user._id);
+        console.log(loggedInUserId);
         
+        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
+        console.log(filteredUsers);
         res.status(200).json(filteredUsers);
 
 
     } catch (error) {
+        console.error("Error in getUsersForSidebar:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 } 
