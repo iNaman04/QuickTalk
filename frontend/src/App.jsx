@@ -9,6 +9,7 @@ import SettingsPage from './pages/SettingsPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import { use } from 'react'
 import { useAuthStore } from './store/useAuthStore.js'
+import { useThemeStore } from './store/useThemeStore.js'
 import { Loader, Loader2 } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
 
@@ -17,7 +18,7 @@ import { Toaster } from 'react-hot-toast'
 const App = () => {
 
   const {authUser, checkAuth, isCheckingAuth} = useAuthStore();
-
+  const { theme } = useThemeStore();
   useEffect(() => {
    checkAuth();       // useeffect ka code render hone ka baad chlta hai mtlab pehle saaara code chl jayge from upr to niche then useffect ka code chlega, if koi state change change hoeygi usme to compoent dubaara re redner kr jayga
   }, [checkAuth]);
@@ -34,8 +35,8 @@ const App = () => {
 
   return (
 
-    <div>
-      <Navbar />
+    <div data-theme ={theme}>
+      <Navbar /> 
 
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
