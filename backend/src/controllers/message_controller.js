@@ -9,10 +9,10 @@ export const getUsersForSidebar = async (req, res) => {
 
     try {
         const loggedInUserId = new mongoose.Types.ObjectId(req.user._id);
-        console.log(loggedInUserId);
+        
 
         const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
-        console.log(filteredUsers);
+        
         res.status(200).json(filteredUsers);
 
 

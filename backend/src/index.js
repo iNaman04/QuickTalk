@@ -10,8 +10,9 @@ import messageRoutes from './routes/message_route.js';
 import { connectDB } from './lib/db.js';
 import cookieparser from 'cookie-parser';
 import cors from 'cors';
+import { app,server } from './lib/socket.js';
 
-const app = express();
+
 const PORT = process.env.PORT;
 
 // 🚨 Place CORS at the very top (before JSON or cookieparser)
@@ -37,7 +38,7 @@ app.get("/test", (req, res) => res.send("CORS OK"));
 
 // 📌 Start Server
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log("Server is running on PORT " + PORT);
   });
 });
