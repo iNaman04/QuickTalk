@@ -3,16 +3,17 @@ import Message from '../models/message_model.js';
 import mongoose from 'mongoose';
 import User from '../models/user_model.js';
 import cloudinary from "../lib/cloudinary.js"
+import { getRecieverSocketId, io } from '../lib/socket.js';
 
 export const getUsersForSidebar = async (req, res) => {
 
 
     try {
         const loggedInUserId = new mongoose.Types.ObjectId(req.user._id);
-        console.log(loggedInUserId);
+        
 
         const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
-        console.log(filteredUsers);
+        
         res.status(200).json(filteredUsers);
 
 
@@ -65,6 +66,11 @@ export const sendMessage = async (req, res) => {
 
     await newMessage.save();
 
+    const receiverSocketId = getRecieverSocketId(receiverId);
+    if(receiverSocketId){
+        io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+ 
     res.status(201).json(newMessage);
   } catch (error) {
     console.log("Error in sendMessage controller: ", error.message);

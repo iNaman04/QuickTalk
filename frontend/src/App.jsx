@@ -17,8 +17,12 @@ import { Toaster } from 'react-hot-toast'
 
 const App = () => {
 
-  const {authUser, checkAuth, isCheckingAuth} = useAuthStore();
+  const {authUser, checkAuth, isCheckingAuth, onlineUsers} = useAuthStore();
   const { theme } = useThemeStore();
+
+  console.log(onlineUsers);
+  
+
   useEffect(() => {
    checkAuth();       // useeffect ka code render hone ka baad chlta hai mtlab pehle saaara code chl jayge from upr to niche then useffect ka code chlega, if koi state change change hoeygi usme to compoent dubaara re redner kr jayga
   }, [checkAuth]);
